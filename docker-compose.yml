@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  app:
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+      - DATABASE_PORT=${DB_PORT}
+    tty: true
+    build: .
+    ports:
+      - '8888:8080'
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    networks:
+      - claimd
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+    ports:
+      - '1234:5432'
+    networks:
+      -  claimd
+
+# Networks to be created to facilitate communication between containers
+networks:
+  claimd:
+    driver: bridge
